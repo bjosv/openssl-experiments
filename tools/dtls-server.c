@@ -5,7 +5,6 @@
 #include <unistd.h>
 
 #define SERVER_PORT 4433
-#define BUFSIZE 2048
 #define UNUSED __attribute__((unused))
 
 #define openssl_abort(msg)                      \
@@ -96,17 +95,15 @@ int main(int argc UNUSED, char **argv UNUSED)
         openssl_abort("DTLS accept failed");
     printf("DTLS accept successful\n");
 
-    const char *data = "Hello client";
-    if (SSL_write(ssl, data, strlen(data)) <= 0)
-        openssl_abort("DTLS write failed");
-    printf("DTLS write successful\n");
-
+    #define BUFSIZE 2048
     char buffer[BUFSIZE];
     memset(buffer, 0, BUFSIZE);
-    int bytes = SSL_read(ssl, buffer, BUFSIZE);
-    if (bytes <= 0)
-        openssl_abort("DTLS read failed");
-    printf("DTLS read: %s\n", buffer);
+
+    while (1) {
+        int bytes = SSL_read(ssl, buffer, BUFSIZE);
+        if (bytes <= 0)
+            openssl_abort("DTLS read failed");
+    }
 
     SSL_shutdown(ssl);
     SSL_free(ssl);
