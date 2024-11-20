@@ -30,10 +30,10 @@ int main(int argc UNUSED, char **argv UNUSED)
     SSL_CTX *ctx = SSL_CTX_new(DTLS_client_method());
     openssl_assert(ctx, "Failed to create context");
 
-    if (SSL_CTX_use_certificate_file(ctx, "tls/client.crt", SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_certificate_file(ctx, "dtls/client.crt", SSL_FILETYPE_PEM) != 1)
         openssl_abort("Failed to load certificate file");
 
-    if (SSL_CTX_use_PrivateKey_file(ctx, "tls/client.key", SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_PrivateKey_file(ctx, "dtls/client.key", SSL_FILETYPE_PEM) != 1)
         openssl_abort("Failed to load private key file");
 
     if (SSL_CTX_check_private_key(ctx) != 1)
@@ -88,26 +88,6 @@ int main(int argc UNUSED, char **argv UNUSED)
         if (writes % 100000 == 0)
             printf("Number of writes: %dk\n", writes/1000);
     }
-
-    /* #define WRITES 1000000 */
-    /* #define LOOPS 10 */
-    /* int sum = 0; */
-    /* int max = 0; */
-    /* for (int j = 0; j < LOOPS; ++j) { */
-    /*     clock_t start = clock(); */
-    /*     for (int i = 0; i < WRITES; ++i) { */
-    /*         if (SSL_write_ex(ssl, data, sizeof(data), &written) <= 0) */
-    /*             openssl_abort("DTLS write failed"); */
-    /*         if (written != sizeof(data)) */
-    /*             openssl_abort("DTLS all data not sent"); */
-    /*     } */
-    /*     clock_t stop = clock(); */
-    /*     int wps = (int) (WRITES * CLOCKS_PER_SEC / (stop - start)); */
-    /*     printf("[%d] %d writes per second\n", j, wps); */
-    /*     if (wps > max) max = wps; */
-    /*     sum += wps; */
-    /* } */
-    /* printf("AVG: %d writes per second\n", sum/LOOPS); */
 
     SSL_shutdown(ssl);
     SSL_free(ssl);

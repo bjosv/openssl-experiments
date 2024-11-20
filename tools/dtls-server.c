@@ -65,9 +65,9 @@ int main(int argc UNUSED, char **argv UNUSED)
     SSL_CTX *ctx = SSL_CTX_new(DTLS_server_method());
     openssl_assert(ctx, "Failed to create context");
 
-    if (SSL_CTX_use_certificate_file(ctx, "tls/server.crt", SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_certificate_file(ctx, "dtls/server.crt", SSL_FILETYPE_PEM) != 1)
         openssl_abort("Failed to load certificate file");
-    if (SSL_CTX_use_PrivateKey_file(ctx, "tls/server.key", SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_PrivateKey_file(ctx, "dtls/server.key", SSL_FILETYPE_PEM) != 1)
         openssl_abort("Failed to load private key file");
     if (SSL_CTX_check_private_key(ctx) != 1)
         openssl_abort("Invalid private key");
