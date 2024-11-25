@@ -28,9 +28,9 @@ make
 
 ## Measurements
 
-### Initial measurement in other project
+### Initial measurement from other project
 
-Measure the packets-per-second with suspected commits.
+Measure the packets-per-second on baseline and suspected commits.
 
 ```
 # Baseline.
@@ -47,40 +47,58 @@ b9e37f8f57 | 2022-10-13 | Convert dtls_write_records to use standard record laye
 ~180k pps (14% degradation)
 ```
 
-### Send loop measurements, 10 minutes runtime.
+### Send-loop measurements
 
-Using separate test binaries, a [client](../tools/dtls-client.c) that sends to a [server](../tools/dtls-server.c).
+* Using separate test binaries, a [client](../tools/dtls-client.c) that sends to a [server](../tools/dtls-server.c).
+* 10 minutes runtime.
+* Localhost.
+* Send 1024 bytes per write.
 
 ```
-# OpenSSL 3.1.7
+#### OpenSSL 3.1.7
 Number of writes: 169200k
 282k pps
 
-# OpenSSL 3.2.3
+No registered malloc per write, only during setup:
+- Number of writes: 169000k
+  malloc-count=9841, realloc-count=336, free-count=4026
+
+#### OpenSSL 3.2.3
 Number of writes: 155400k
 259k pps
 8% decrease from 3.1.7
 
-# OpenSSL 3.4.0
+2 mallocs per write:
+- Number of writes: 155600k
+  malloc-count=311209981, realloc-count=328, free-count=466804293
+
+#### OpenSSL 3.4.0
 Number of writes: 159700k
 266k pps
 6% decrease from 3.1.7
+
+2 mallocs per write:
+- Number of writes: 153300k
+  malloc-count=306610965, realloc-count=340, free-count=459904638
 ```
 
 ### Profiling
 
 Flamegraphs:
-- [profile_3.1.7.svg](images/profile_3.1.7.svg)
-- [profile_3.2.3.svg](images/profile_3.2.3.svg)
-- [profile_diff_3.1.7_to_3.2.3.svg](images/profile_diff_3.1.7_to_3.2.3.svg)
-- [profile_diff_3.2.3_to_3.4.0.svg](images/profile_diff_3.2.3_to_3.4.0.svg)
+- [profile_3.1.7.svg](https://raw.githubusercontent.com/bjosv/openssl-experiments/refs/heads/main/issues/images/profile_3.1.7.svg)
+- [profile_3.2.3.svg](https://raw.githubusercontent.com/bjosv/openssl-experiments/refs/heads/main/issues/images/profile_3.2.3.svg)
+- [profile_diff_3.1.7_to_3.2.3.svg](https://raw.githubusercontent.com/bjosv/openssl-experiments/refs/heads/main/issues/images/profile_diff_3.1.7_to_3.2.3.svg)
+- [profile_diff_3.2.3_to_3.4.0.svg](https://raw.githubusercontent.com/bjosv/openssl-experiments/refs/heads/main/issues/images/profile_diff_3.2.3_to_3.4.0.svg)
 
 ```
 sudo apt-get install bpfcc-tools linux-headers-$(uname -r)
 
+# Start server
+./dtls-server
+
+# Start client in other shell (profiling needs sudo)
 DURATION=600
 sudo ls
-./dtls-server
 
 # Profile 3.1.7 -------------------------------
 ./dtls-client &
@@ -102,10 +120,16 @@ kill $PID
 
 
 # Create flamegraphs using https://github.com/brendangregg/FlameGraph
-
 <repos>/FlameGraph/flamegraph.pl profile_3.1.7.data > profile_3.1.7.svg
 <repos>/FlameGraph/flamegraph.pl profile_3.2.3.data > profile_3.2.3.svg
 
 <repos>/FlameGraph/difffolded.pl profile_3.1.7.data profile_3.2.3.data > profile_diff.data
 <repos>/FlameGraph/flamegraph.pl profile_diff.data > profile_diff.svg
 ```
+
+## Links
+
+### DTLS related work package
+
+New write record layer architecture.
+https://github.com/openssl/openssl/pull/19424

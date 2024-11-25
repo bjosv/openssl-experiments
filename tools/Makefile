@@ -8,8 +8,7 @@
 # 3.4.0
 OPENSSL_REV = 98acb6b
 
-# Use an own built OpenSSL that is installed in ~/tmp/, via:
-# REV=98acb6b for openssl-3.4.0
+# Use an own built OpenSSL that is installed in ~/tmp/,
 # ./Configure --prefix=$HOME/tmp/openssl-$REV --openssldir=$HOME/tmp/openssl-$REV -Wl,-rpath=$HOME/tmp/openssl-$REV/lib64
 INCLUDES    = -I$(HOME)/tmp/openssl-$(OPENSSL_REV)/include
 LDFLAGS     = -L$(HOME)/tmp/openssl-$(OPENSSL_REV)/lib64 -Wl,-rpath,$(HOME)/tmp/openssl-$(OPENSSL_REV)/lib64

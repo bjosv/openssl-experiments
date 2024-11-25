@@ -20,4 +20,8 @@ git co $REV
 # Use RPATH since we use prefix.
 ./Configure --prefix=$HOME/tmp/openssl-$REV --openssldir=$HOME/tmp/openssl-$REV -Wl,-rpath=$HOME/tmp/openssl-$REV/lib64
 make clean all install
+
+# OR, enable crypto-mdebug to get CRYPTO_get_alloc_counts(..)
+./Configure enable-crypto-mdebug --prefix=$HOME/tmp/openssl-$REV-mdebug --openssldir=$HOME/tmp/openssl-$REV-mdebug -Wl,-rpath=$HOME/tmp/openssl-$REV-mdebug/lib64
+make clean all install
 ```

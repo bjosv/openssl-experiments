@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <arpa/inet.h>
+#include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <unistd.h>
@@ -85,8 +86,14 @@ int main(int argc UNUSED, char **argv UNUSED)
             openssl_abort("DTLS all data not sent");
 
         ++writes;
-        if (writes % 100000 == 0)
+        if (writes % 100000 == 0) {
             printf("Number of writes: %dk\n", writes/1000);
+#ifndef OPENSSL_NO_CRYPTO_MDEBUG
+            int mcount = 0, rcount = 0, fcount = 0;
+            CRYPTO_get_alloc_counts(&mcount, &rcount, &fcount);
+            printf("malloc-count=%d, realloc-count=%d, free-count=%d\n", mcount, rcount, fcount);
+#endif
+        }
     }
 
     SSL_shutdown(ssl);
