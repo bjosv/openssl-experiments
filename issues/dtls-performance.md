@@ -133,3 +133,22 @@ kill $PID
 
 New write record layer architecture.
 https://github.com/openssl/openssl/pull/19424
+
+## TLS v1.2
+
+#### OpenSSL 3.1.7, 10 minutes, TLS v1.2
+Number of writes: 237100k (DTLS: 169200k)
+395k pps (DTLS: 282k pps)
+
+Number of writes: 237100k
+malloc-count=474209785, realloc-count=326, free-count=711303963
+
+2 mallocs per write
+
+#### OpenSSL 3.2.3, 10 minutes, TLS v1.2
+Number of writes: 234300k (DTLS: 155400k)
+390k pps (DTLS: 259k pps)
+
+Number of writes: 234300k
+malloc-count=468609906, realloc-count=318, free-count=702904207
+

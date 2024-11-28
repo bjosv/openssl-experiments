@@ -19,15 +19,21 @@ LDFLAGS     = -L$(HOME)/tmp/openssl-$(OPENSSL_REV)/lib64 -Wl,-rpath,$(HOME)/tmp/
 CFLAGS = -std=c99 -O3 -g -ggdb -pedantic -Wall -Wextra
 LDLIBS = -lssl -lcrypto
 
-all: dtls-server dtls-client
+all: dtls-server dtls-client tls-server tls-client
 
 clean:
-	rm -f dtls-server dtls-client
+	rm -f dtls-server dtls-client tls-server tls-client
 
 dtls-server: dtls-server.c
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
 dtls-client: dtls-client.c
+	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+tls-server: tls-server.c
+	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+tls-client: tls-client.c
 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
 .PHONY: certs
